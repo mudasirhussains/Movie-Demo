@@ -1,0 +1,12 @@
+package com.example.moviesdemo.activities
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import com.example.moviesdemo.R
+
+class MainActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+    }
+}
