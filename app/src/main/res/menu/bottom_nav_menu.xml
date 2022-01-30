@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/mDashboard"
+        android:icon="@drawable/ic_nav_one"
+        android:title="@string/dashboard" />
+    <item
+        android:id="@+id/mWatch"
+        android:icon="@drawable/ic_nav_two"
+        android:title="@string/watch" />
+    <item
+        android:id="@+id/mMedia"
+        android:icon="@drawable/ic_nav_three"
+        android:title="@string/media_library" />
+    <item
+        android:id="@+id/mMore"
+        android:icon="@drawable/ic_nav_four"
+        android:title="@string/more" />
+</menu>

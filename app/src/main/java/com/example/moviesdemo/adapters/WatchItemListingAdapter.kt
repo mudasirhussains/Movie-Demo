@@ -9,10 +9,10 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.tentwentyassignment.R
-import com.example.tentwentyassignment.interfaces.ItemClickListener
+import com.example.moviesdemo.R
+import com.example.moviesdemo.interfaces.ItemClickListener
+import com.example.moviesdemo.utils.Constants
 import com.example.tentwentyassignment.models.UpcomingResult
-import com.example.tentwentyassignment.utils.Constants
 
 class WatchItemListingAdapter(private val mCtx: Context, private val mList: ArrayList<UpcomingResult>, private var onClick: ItemClickListener) : RecyclerView.Adapter<WatchItemListingAdapter.ViewHolder>() {
 
@@ -23,9 +23,10 @@ class WatchItemListingAdapter(private val mCtx: Context, private val mList: Arra
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val vList = mList[position]
-        Glide.with(mCtx).load(Constants.IMAGE_URL+vList.backdropPath).placeholder(R.drawable.watch_two).into(holder.imageItemWatch)
+        Glide.with(mCtx).load(Constants.IMAGE_URL+vList.backdropPath).placeholder(R.drawable.kings_man_main).into(holder.imageItemWatch)
 
         holder.txtItemWatch.text = vList.title
+        holder.txtYear.text = vList.releaseDate
         holder.cardItemWatch.setOnClickListener {
             onClick.watchItemCLicked(vList.id)
         }
@@ -48,5 +49,6 @@ class WatchItemListingAdapter(private val mCtx: Context, private val mList: Arra
         val cardItemWatch = itemView.findViewById(R.id.cardItemWatch) as CardView
         val imageItemWatch = itemView.findViewById(R.id.imageItemWatch) as ImageView
         val txtItemWatch  = itemView.findViewById(R.id.txtItemWatch) as TextView
+        val txtYear  = itemView.findViewById(R.id.txtYear) as TextView
         }
 }

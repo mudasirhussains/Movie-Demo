@@ -16,6 +16,9 @@ class MainRepository @Inject constructor(
     suspend fun getDetailPageData(keyword : Int) =
             backEndApi.getDetailPage(keyword, Constants.API_KEY)
 
+    suspend fun getSearchedMovies(queryKeyword : String) =
+        backEndApi.getSearchedMovies(Constants.API_KEY,queryKeyword)
+
 
 //    //Room
 //    suspend fun insert(moviesModel: List<UpcomingResult>) {

@@ -11,23 +11,20 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.tentwentyassignment.R
-import com.example.tentwentyassignment.activities.DetailPageActivity
-import com.example.tentwentyassignment.adapters.WatchItemListingAdapter
-import com.example.tentwentyassignment.databinding.FragmentWatchBinding
-import com.example.tentwentyassignment.interfaces.ItemClickListener
+import com.example.moviesdemo.R
+import com.example.moviesdemo.activities.DetailPageActivity
+import com.example.moviesdemo.adapters.WatchItemListingAdapter
+import com.example.moviesdemo.databinding.FragmentWatchBinding
+import com.example.moviesdemo.interfaces.ItemClickListener
 import com.example.tentwentyassignment.models.OfflineMovieModel
 import com.example.tentwentyassignment.models.UpcomingResult
-import com.example.tentwentyassignment.room.AppDatabase
-import com.example.tentwentyassignment.room.DAO
-import com.example.tentwentyassignment.viewmodels.WatchFragmentViewModel
+import com.example.moviesdemo.viewmodels.WatchFragmentViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class WatchFragment : Fragment(), ItemClickListener {
     private lateinit var binding: FragmentWatchBinding
     private lateinit var mViewModel: WatchFragmentViewModel
-    private lateinit var dao : DAO
     private var arrayListUpcomingMovies: ArrayList<UpcomingResult> = ArrayList()
     private var offlineMovies: List<OfflineMovieModel> = listOf()
     override fun onCreateView(
@@ -40,26 +37,27 @@ class WatchFragment : Fragment(), ItemClickListener {
         if (isNetworkAvailable(requireContext())){
             callMoviesApi()
             setObserver()
-        }else{
-            setOfflineAdapter()
         }
+//        else{
+//            setOfflineAdapter()
+//        }
         return binding.root
     }
 
     private fun setBindings() {
         mViewModel = ViewModelProvider(this).get(WatchFragmentViewModel::class.java)
-        dao = AppDatabase.getInstance(requireContext()).dao()!!
+        //dao = AppDatabase.getInstance(requireContext()).dao()!!
     }
 
     private fun setOfflineAdapter() {
-        offlineMovies =  dao.getAll()
+        //offlineMovies =  dao.getAll()
     }
 
     private fun setObserver() {
         mViewModel.mUpcomingMoviesResponse.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 arrayListUpcomingMovies.addAll(it.results)
-                dao.insertData(offlineMovies)
+                //dao.insertData(offlineMovies)
                 setUpcomingMoviesAdapter(arrayListUpcomingMovies)
                 binding.progressBar.visibility = View.GONE
             }

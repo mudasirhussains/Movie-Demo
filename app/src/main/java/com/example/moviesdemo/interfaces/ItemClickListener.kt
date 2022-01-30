@@ -1,4 +1,4 @@
-package com.example.tentwentyassignment.interfaces
+package com.example.moviesdemo.interfaces
 
 import com.example.tentwentyassignment.models.UpcomingResult
 

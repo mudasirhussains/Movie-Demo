@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.tentwentyassignment.R
+import com.example.moviesdemo.R
 import com.example.tentwentyassignment.models.SearchItemsModel
 
 class SearchItemListingAdapter(private var mList: ArrayList<SearchItemsModel>) : RecyclerView.Adapter<SearchItemListingAdapter.ViewHolder>() {
