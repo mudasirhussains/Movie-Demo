@@ -1,4 +1,4 @@
-package com.example.tentwentyassignment.models
+package com.example.moviesdemo.models
 
 data class SearchItemsModel(
     var itemTitle: String,

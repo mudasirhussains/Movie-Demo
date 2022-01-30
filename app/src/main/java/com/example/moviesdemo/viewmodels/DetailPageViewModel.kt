@@ -12,22 +12,28 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailPageViewModel @Inject constructor(
     private val mainRepository: MainRepository,
-    ) : ViewModel() {
+) : ViewModel() {
 
     val mDetailPageResponse = MutableLiveData<DetailPageModel>()
     var loadingError = MutableLiveData<String?>()
     var loading = MutableLiveData<Boolean>()
     var job: Job? = null
-    var exceptionalHandling = CoroutineExceptionHandler { coroutineContext, throwable ->
+    var exceptionalHandling = CoroutineExceptionHandler { _, throwable ->
         onError("Exceptional Error: ${throwable.localizedMessage}")
     }
 
     private fun onError(message: String) {
-//        loadingError.value = message
-//        loading.value = false
+        try {
+            loading.postValue(true)
+            if (message.isNotEmpty()) {
+                loadingError.postValue(message)
+            }
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
     }
 
-    fun callDetailPageData(keyword : Int) {
+    fun callDetailPageData(keyword: Int) {
         job = CoroutineScope(Dispatchers.IO + exceptionalHandling).launch {
             val response = mainRepository.getDetailPageData(keyword)
             withContext(Dispatchers.Main) {
@@ -38,11 +44,11 @@ class DetailPageViewModel @Inject constructor(
                         loading.value = false
                     } else {
                         onError("UserLoadError : ${response.message()} ")
-                        loading.value = false
+                        loading.value = true
                     }
                 } catch (e: SocketTimeoutException) {
                     onError("UserLoadError : timeout ")
-                    loading.value = false
+                    loading.value = true
                 }
             }
         }

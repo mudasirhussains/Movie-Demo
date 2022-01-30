@@ -1,26 +1,24 @@
 package com.example.moviesdemo.activities
 
-import android.graphics.Color
+import android.annotation.SuppressLint
 import android.graphics.Typeface
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import dagger.hilt.android.AndroidEntryPoint
-import com.bumptech.glide.request.RequestOptions
 import com.example.moviesdemo.R
 import com.example.moviesdemo.adapters.GenresListingAdapter
 import com.example.moviesdemo.databinding.ActivityDetailPageBinding
 import com.example.moviesdemo.models.Genre
 import com.example.moviesdemo.utils.Constants
 import com.example.moviesdemo.viewmodels.DetailPageViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
 
@@ -37,30 +35,48 @@ class DetailPageActivity : AppCompatActivity() {
         callBacks()
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setObserver() {
-        mViewModel.mDetailPageResponse.observe(this, Observer {
+        mViewModel.mDetailPageResponse.observe(this, {
             if (it != null) {
                 setGenreAdapter(it.genres)
                 Glide.with(this)
                     .load(Constants.IMAGE_URL + it.backdropPath)
-//                    .apply(RequestOptions().override(600, 200))
-                    .into(binding.posterImage!!)
+                    .into(binding.posterImage)
 
 
-                var year = Calendar.getInstance().get(Calendar.YEAR).toString()
-                if (it.releaseDate.contains(year)){
+                val year = Calendar.getInstance().get(Calendar.YEAR).toString()
+                if (it.releaseDate.contains(year)) {
                     binding.txtReleaseDate.setTypeface(null, Typeface.BOLD)
-                    binding.txtReleaseDate.setTextColor(ContextCompat.getColor(applicationContext, R.color.red));
+                    binding.txtReleaseDate.setTextColor(
+                        ContextCompat.getColor(
+                            applicationContext,
+                            R.color.red
+                        )
+                    )
                 }
 
                 binding.txtReleaseDate.text = "In Theaters " + it.releaseDate
                 binding.txtDescription.text = it.overview
                 binding.txtMovieTitle.text = it.title
-                binding.txtVoteAverage.text = "Votes " +it.voteAverage.toString()
-                binding.txtCount.text = "Counts " +it.voteCount.toString()
-                binding.txtRevenue.text = "Revenue: " +it.revenue
-                binding.txtDuration.text = "Duration: " +it.runtime+" mins"
+                binding.txtVoteAverage.text = "Votes " + it.voteAverage.toString()
+                binding.txtCount.text = "Counts " + it.voteCount.toString()
+                binding.txtRevenue.text = "Revenue: " + it.revenue
+                binding.txtDuration.text = "Duration: " + it.runtime + " mins"
                 binding.progressBarDetailPage?.visibility = View.GONE
+            }
+        })
+
+        mViewModel.loading.observe(this, { isError ->
+            if (isError) {
+                binding.progressBarDetailPage?.visibility = View.VISIBLE
+            }
+        })
+
+        mViewModel.loadingError.observe(this, {
+            if (it != null) {
+                Toast.makeText(applicationContext, "Something went wrong!", Toast.LENGTH_SHORT)
+                    .show()
             }
         })
     }
@@ -68,7 +84,7 @@ class DetailPageActivity : AppCompatActivity() {
     private fun setGenreAdapter(genres: List<Genre>) {
         binding.recyclerGenres.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        val adapter = GenresListingAdapter(this, genres)
+        val adapter = GenresListingAdapter(genres)
         binding.recyclerGenres.adapter = adapter
     }
 

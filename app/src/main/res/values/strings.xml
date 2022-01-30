@@ -19,4 +19,5 @@
     <string name="dashboard">Dashboard</string>
     <string name="media_library">Media Library</string>
     <string name="more">More</string>
+    <string name="in_theaters">In Theaters </string>
 </resources>

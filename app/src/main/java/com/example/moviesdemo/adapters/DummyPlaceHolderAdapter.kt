@@ -7,12 +7,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.moviesdemo.R
-import com.example.tentwentyassignment.models.SearchItemsModel
+import com.example.moviesdemo.models.SearchItemsModel
 
-class SearchItemListingAdapter(private var mList: ArrayList<SearchItemsModel>) : RecyclerView.Adapter<SearchItemListingAdapter.ViewHolder>() {
+class DummyPlaceHolderAdapter(private var mList: ArrayList<SearchItemsModel>) :
+    RecyclerView.Adapter<DummyPlaceHolderAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.search_frag_list_items, parent, false)
+        val v = LayoutInflater.from(parent.context)
+            .inflate(R.layout.search_frag_list_items, parent, false)
         return ViewHolder(v)
     }
 
@@ -36,7 +38,7 @@ class SearchItemListingAdapter(private var mList: ArrayList<SearchItemsModel>) :
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imageItemWatch = itemView.findViewById(R.id.imageItemWatch) as ImageView
-        val txtItemWatch  = itemView.findViewById(R.id.txtItemWatch) as TextView
+        val txtItemWatch = itemView.findViewById(R.id.txtItemWatch) as TextView
     }
 
 

@@ -5,18 +5,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.moviesdemo.R
 import com.example.moviesdemo.interfaces.ItemClickListener
 import com.example.moviesdemo.models.SearchedResult
-import com.example.moviesdemo.models.SearchedResultModel
 import com.example.moviesdemo.utils.Constants
-import com.example.tentwentyassignment.models.SearchItemsModel
 
-class SearchResultListingAdapter(private var mCtx : Context, private var mList: ArrayList<SearchedResult>, private var onClick: ItemClickListener) :
+class SearchResultListingAdapter(
+    private var mCtx: Context,
+    private var mList: ArrayList<SearchedResult>,
+    private var onClick: ItemClickListener
+) :
     RecyclerView.Adapter<SearchResultListingAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -28,9 +30,10 @@ class SearchResultListingAdapter(private var mCtx : Context, private var mList: 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val vList = mList[position]
 
-        Glide.with(mCtx).load(Constants.IMAGE_URL+vList.backdropPath).placeholder(R.drawable.kings_man_main).into(holder.imageSearchResult)
+        Glide.with(mCtx).load(Constants.IMAGE_URL + vList.backdropPath)
+            .placeholder(R.drawable.kings_man_main).into(holder.imageSearchResult)
         holder.titleSearchResult.text = vList.title
-        holder.subTitleSearchResult.text = "Rating "+vList.voteAverage.toString()
+        holder.subTitleSearchResult.text = "Rating " + vList.voteAverage.toString()
         holder.relContainer.setOnClickListener {
             onClick.watchItemCLicked(vList.id)
         }
@@ -44,7 +47,6 @@ class SearchResultListingAdapter(private var mCtx : Context, private var mList: 
         return position.toLong()
     }
 
-
     override fun getItemViewType(position: Int): Int {
         return position
     }
@@ -53,6 +55,6 @@ class SearchResultListingAdapter(private var mCtx : Context, private var mList: 
         val imageSearchResult = itemView.findViewById(R.id.imageSearchResult) as ImageView
         val titleSearchResult = itemView.findViewById(R.id.titleSearchResult) as TextView
         val subTitleSearchResult = itemView.findViewById(R.id.subTitleSearchResult) as TextView
-        val relContainer = itemView.findViewById(R.id.relContainer) as RelativeLayout
+        val relContainer = itemView.findViewById(R.id.relContainer) as ConstraintLayout
     }
 }

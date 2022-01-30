@@ -1,16 +1,14 @@
 package com.example.moviesdemo.adapters
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.moviesdemo.R
 import com.example.moviesdemo.models.Genre
 
-class GenresListingAdapter(private var mCtx: Context, private var mList: List<Genre>) :
+class GenresListingAdapter(private var mList: List<Genre>) :
     RecyclerView.Adapter<GenresListingAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -38,7 +36,6 @@ class GenresListingAdapter(private var mCtx: Context, private var mList: List<Ge
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val cardGenre = itemView.findViewById(R.id.cardGenre) as CardView
         val txtGenre = itemView.findViewById(R.id.txtGenre) as TextView
     }
 

@@ -19,11 +19,4 @@ class MainRepository @Inject constructor(
     suspend fun getSearchedMovies(queryKeyword : String) =
         backEndApi.getSearchedMovies(Constants.API_KEY,queryKeyword)
 
-
-//    //Room
-//    suspend fun insert(moviesModel: List<UpcomingResult>) {
-//        mDao.insertData(moviesModel)
-//    }
-
-
 }
