@@ -1,48 +1,45 @@
-package com.example.moviesdemo.fragments
+package com.example.moviesdemo.activities
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.tentwentyassignment.models.SearchItemsModel
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.moviesdemo.R
-import com.example.moviesdemo.activities.DetailPageActivity
-import com.example.moviesdemo.adapters.SearchItemListingAdapter
+import com.example.moviesdemo.adapters.DummyPlaceHolderAdapter
 import com.example.moviesdemo.adapters.SearchResultListingAdapter
-import com.example.moviesdemo.databinding.FragmentSearchBinding
+import com.example.moviesdemo.databinding.ActivitySearchBinding
 import com.example.moviesdemo.interfaces.ItemClickListener
 import com.example.moviesdemo.models.SearchedResult
-import com.example.moviesdemo.models.SearchedResultModel
 import com.example.moviesdemo.utils.Extensions.hideKeyboard
-import com.example.moviesdemo.viewmodels.SearchedFragmentViewModel
+import com.example.moviesdemo.viewmodels.SearchActivityViewModel
+import com.example.moviesdemo.models.SearchItemsModel
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.*
-import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
-class SearchFragment : Fragment(), ItemClickListener {
-    private lateinit var binding: FragmentSearchBinding
-    private lateinit var mViewModel: SearchedFragmentViewModel
+class SearchActivity : AppCompatActivity(), ItemClickListener {
+    private lateinit var mViewModel: SearchActivityViewModel
+    private lateinit var binding:ActivitySearchBinding
     private var mSearchItemResultList = ArrayList<SearchedResult>()
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentSearchBinding.inflate(inflater, container, false)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         setBindings()
         populateDataInModel()
         setObserver()
         callBacks()
-        return binding.root
+    }
+
+    private fun setBindings() {
+        binding = ActivitySearchBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        mViewModel = ViewModelProvider(this).get(SearchActivityViewModel::class.java)
     }
 
     private fun callBacks() {
@@ -50,7 +47,7 @@ class SearchFragment : Fragment(), ItemClickListener {
             if (binding.editTextSearch.text.toString().isNotEmpty()) {
                 binding.editTextSearch.setText("")
             } else {
-                setCurrentFragment(WatchFragment())
+                finish()
             }
         }
 
@@ -59,7 +56,7 @@ class SearchFragment : Fragment(), ItemClickListener {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable) {
 
-                if (s.toString().isNullOrEmpty()) {
+                if (s.toString().isEmpty()) {
                     binding.recyclerBeforeSearch.visibility = View.VISIBLE
                     binding.linearSearchedResults.visibility = View.GONE
                 } else {
@@ -73,9 +70,9 @@ class SearchFragment : Fragment(), ItemClickListener {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
 
                 if (binding.showEmptyText.visibility == View.VISIBLE) {
-                    hideKeyboard()
+                    this.hideKeyboard(view = binding.showEmptyText)
                 } else {
-                    hideKeyboard()
+                    this.hideKeyboard(view = binding.showEmptyText)
                     binding.linearAfterResultFound.visibility = View.VISIBLE
                     binding.linearBeforeResultFound.visibility = View.GONE
                     binding.txtShowTopResult.visibility = View.GONE
@@ -100,19 +97,27 @@ class SearchFragment : Fragment(), ItemClickListener {
 
     }
 
-    private fun setCurrentFragment(fragment: Fragment) =
-        requireActivity().supportFragmentManager.beginTransaction().apply {
-            replace(R.id.frameContainer, fragment)
-            commit()
-        }
 
+    @SuppressLint("SetTextI18n")
     private fun setObserver() {
-        mViewModel.mSearchedMoviesResponse.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+        mViewModel.mSearchedMoviesResponse.observe(this, {
             if (it != null) {
                 mSearchItemResultList = it.results as ArrayList<SearchedResult>
                 binding.searchResultCount.text = it.totalResults.toString() + " Results Found"
                 setSearchAdapter()
                 binding.progressSearch.visibility = View.VISIBLE
+            }
+        })
+
+        mViewModel.loading.observe(this, { isError ->
+            if (isError) {
+                binding.progressSearch.visibility = View.VISIBLE
+            }
+        })
+
+        mViewModel.loadingError.observe(this, {
+            if (it != null) {
+                Toast.makeText(applicationContext, "Something went wrong!", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -122,16 +127,12 @@ class SearchFragment : Fragment(), ItemClickListener {
             binding.showEmptyText.visibility = View.GONE
             binding.linearSearchedResults.visibility = View.VISIBLE
             binding.recyclerBeforeSearch.visibility = View.GONE
-            binding.recyclerAfterSearch.layoutManager = LinearLayoutManager(requireActivity())
-            val adapterSecond = SearchResultListingAdapter(requireContext(), mSearchItemResultList, this)
+            binding.recyclerAfterSearch.layoutManager = LinearLayoutManager(this)
+            val adapterSecond = SearchResultListingAdapter(this, mSearchItemResultList, this)
             binding.recyclerAfterSearch.adapter = adapterSecond
         } else {
             binding.showEmptyText.visibility = View.VISIBLE
         }
-    }
-
-    private fun setBindings() {
-        mViewModel = ViewModelProvider(this).get(SearchedFragmentViewModel::class.java)
     }
 
     private fun populateDataInModel() {
@@ -177,17 +178,16 @@ class SearchFragment : Fragment(), ItemClickListener {
         )
         binding.recyclerBeforeSearch.visibility = View.VISIBLE
         binding.linearSearchedResults.visibility = View.GONE
-        binding.recyclerBeforeSearch.layoutManager = GridLayoutManager(requireActivity(), 2)
-        val adapter = SearchItemListingAdapter(mSearchItemList)
+        binding.recyclerBeforeSearch.layoutManager = GridLayoutManager(this, 2)
+        val adapter = DummyPlaceHolderAdapter(mSearchItemList)
         binding.recyclerBeforeSearch.adapter = adapter
 
     }
 
     override fun watchItemCLicked(movieId: Int) {
-        val intent = Intent(requireContext(), DetailPageActivity::class.java)
+        val intent = Intent(this, DetailPageActivity::class.java)
         intent.putExtra("mIntentID", movieId)
         startActivity(intent)
     }
-
 
 }
